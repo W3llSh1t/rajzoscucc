@@ -9,6 +9,19 @@ namespace rajzoscuccproject
         private static string saturation = "█";
         private static int currentRow = 13;
         private static int currentCol = 1;
+        private static int menuOpt = 0;
+        private static string arrow = "-->";
+        private static void deleteArrow(int start, int end, int commPos)
+        {
+            string empty = "   ";
+            int length = (end - start);
+            for (int i = 0; i < length; i++)
+            {
+                Console.SetCursorPosition(0, start + i);
+                Console.Write(empty);
+                Console.SetCursorPosition(0, commPos);
+            }
+        }
         private static void Line()
         {
             winWidth = Console.WindowWidth;
@@ -25,219 +38,181 @@ namespace rajzoscuccproject
             Console.WriteLine($"Current Color and Saturation: {saturation}");
             Console.SetCursorPosition(currentCol, currentRow);
         }
+        private static void paintInterface()
+        {
+            Console.Clear();
+            Line();
+            Console.WriteLine("Console Paint");
+            Line();
+            Console.WriteLine("Options: Draw: Space");
+            Console.WriteLine("Set Color: 1, 2, 3, 4 ...");
+            Console.WriteLine("Set Saturation: F1, F2, F3, F4");
+            Console.WriteLine("Continous Drawing: C");
+            Console.WriteLine("Clear Screen: Backspace");
+            Console.WriteLine("Save File: F5");
+            Console.WriteLine("Exit: Escape");
+            Line();
+            Console.WriteLine("Current Color and Saturation: █");
+            Console.SetCursorPosition(0, 12);
+            Console.Write("+");
+            for (int i = 0; i < winWidth - 2; i++)
+            {
+                Console.Write("-");
+            }
+            Console.Write("+");
+            for (int i = 0; i < winHeight - 15; i++)
+            {
+                Console.Write("|");
+                for (int j = 0; j < winWidth - 2; j++)
+                {
+                    Console.Write(" ");
+                }
+                Console.Write("|");
+            }
+            Console.Write("+");
+            for (int i = 0; i < winWidth - 2; i++)
+            {
+                Console.Write("-");
+            }
+            Console.Write("+");
+
+            Console.SetCursorPosition(1, 13);
+        }
+        private static void menu(int start, int length, int commPos)
+        {
+            menuOpt = 0;
+            ConsoleKeyInfo input;
+            int proceed = 0;
+            
+            do
+            {
+                input = Console.ReadKey(true);
+                switch (input.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        if (menuOpt < length)
+                        {
+                            menuOpt++;
+                            deleteArrow(start, start + length, commPos);
+                            Console.SetCursorPosition(0, (start + menuOpt) - 1);
+                            Console.Write(arrow);
+                            Console.SetCursorPosition(0, commPos);
+                            
+
+                        }
+                        break;
+                    case ConsoleKey.UpArrow:
+                        if (menuOpt != 0)
+                        {
+                            menuOpt--;
+                            deleteArrow(start, start + length, commPos);
+                            Console.SetCursorPosition(0, (start + menuOpt) - 1);
+                            Console.Write(arrow);
+                            Console.SetCursorPosition(0, commPos);
+                            
+
+                        }
+                        break;
+                    case ConsoleKey.Enter:
+                        if (menuOpt == 0)
+                        {
+                            Console.WriteLine("Choose an option!");
+                        }
+                        else
+                        {
+                            proceed = 1;
+                            return;
+                        }
+                        break;
+                }
+            } while (input.Key != ConsoleKey.Escape && proceed == 0);
+
+        }
         static void Main(string[] args)
         {
             ConsoleKeyInfo input;
             int opt = 0;
             int back = 0;
-            int proceed1 = 0;
             int proceed = 0;
+            int proceed1= 0;
+            int proceed2 = 0;
             int first = 0;
-            /*
+            int toggleDraw = 0;
+            
+
+            Console.Clear();
+            Line();
+            Console.WriteLine("Console Paint");
+            Line();
+            Console.WriteLine("    Create File");
+            Console.WriteLine("    Open File");
+            Console.WriteLine("    Delete File");
+            Console.WriteLine("    Exit");
+            Line();
+            menu(3, 4, 8);
+            string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ldzs");
             do
             {
-                if (first == 0)
+                switch (proceed)
                 {
-
-
-                    do
-                    {
-
+                    case 1:
                         Console.Clear();
-                        Console.WriteLine("Press 1 to create a new file");
-                        Console.WriteLine("Press 2 to open a file for editing");
-                        Console.WriteLine("Press 3 to delete a file");
-                        input = Console.ReadKey(true);
-                        switch (input.Key)
+                        Line();
+                        Console.WriteLine("Create File");
+                        Line();
+                        Console.WriteLine("File name:");
+                        string createFileName = Console.ReadLine();
+                        string createFile = createFileName + ".ldzs";
+                        if (File.Exists(createFile))
                         {
-                            case ConsoleKey.D1:
-                                opt = 1;
-                                break;
-                            case ConsoleKey.D2:
-                                opt = 2;
-                                break;
-                            case ConsoleKey.D3:
-                                opt = 3;
-                                break;
+                            Console.WriteLine("File already exists!");
+                            Thread.Sleep(2500);
                         }
-                    } while (input.Key != ConsoleKey.Escape && opt != 1 && opt != 2 && opt != 3);
-                }
-                if (back == 1)
-                {
-                    do
-                    {
-
+                        else
+                        {
+                            File.Create(createFile).Close();
+                            Console.WriteLine("File created!");
+                            Line();
+                            Console.WriteLine("Open File?");
+                            Console.WriteLine("    Yes");
+                            Console.WriteLine("    No");
+                            Line();
+                            menu(8, 2, 11);
+                        }
+                        break;
+                    case 2:
                         Console.Clear();
-                        Console.WriteLine("Press 1 to create a new file");
-                        Console.WriteLine("Press 2 to open a file for editing");
-                        Console.WriteLine("Press 3 to delete a file");
-                        input = Console.ReadKey(true);
-                        switch (input.Key)
+                        Line();
+                        Console.WriteLine("Open File");
+                        Line();
+                        if (files.Length == 0)
                         {
-                            case ConsoleKey.D1:
-                                opt = 1;
-                                break;
-                            case ConsoleKey.D2:
-                                opt = 2;
-                                break;
-                            case ConsoleKey.D3:
-                                opt = 3;
-                                break;
+                            Console.WriteLine("No files found!");
+                            Thread.Sleep(2500);
                         }
-                    } while (input.Key != ConsoleKey.Escape && opt != 1 && opt != 2 && opt != 3);
+                        else
+                        {
+                            Console.WriteLine("Choose a file:");
+                            for (int i = 0; i < files.Length; i++)
+                            {
+                                Console.WriteLine($"    {files[i].Substring(Directory.GetCurrentDirectory().Length + 1)}");
+                            }
+                            Console.WriteLine("    Back");
+                            Line();
+                            menu(4, files.Length, files.Length + 2);
+                        }
+                        break;
+                    case 3:
+                        break;
                 }
-                    Console.Clear();
-                do
-                {
-                    switch (opt)
-                    {
-                        case 1:
-                            Line();
-                            Console.WriteLine("Create File");
-                            Line();
-                            Console.WriteLine();
-                            string newFileName = Console.ReadLine();
-                            Line();
-                            Console.WriteLine($"Create File? {newFileName}");
-                            Console.WriteLine("1-Yes");
-                            Console.WriteLine("Esc-No");
-                            Line();
-                            input = Console.ReadKey(true);
-                            if (input.Key == ConsoleKey.D1)
-                            {
-                                if (!File.Exists($"{newFileName}.ldzs"))
-                                {
-                                    File.Create($"{newFileName}.ldzs");
-                                    Console.WriteLine("File created");
-                                    Console.WriteLine("Opening File");
-                                    System.Threading.Thread.Sleep(2000);
-                                    proceed = 1;
-                                }
-                                else
-                                {
-                                    Console.WriteLine("File already exists");
-                                    back = 1;
-                                }
-                            }
-                            break;
-                        case 2:
-                            Line();
-                            Console.WriteLine("Open File");
-                            Line();
-                            //list all existing files in the directory
-                            Console.WriteLine("Existing Files:");
-                            string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ldzs");
-                            int fileNum = 0;
-                            foreach (string file in files)
-                            {
-                                
-                                Console.WriteLine($"{fileNum + 1}:  {file}");
-                                fileNum++;
-                            }
-                            Console.WriteLine("Choose a File:");
-                            int fileChoice = int.Parse(Console.ReadLine());
-                            if (fileChoice > fileNum)
-                            {
-                                Console.WriteLine("Invalid Choice");
-                                System.Threading.Thread.Sleep(2000);
-                                back = 1;
-                                break;
-                            }
-                            else
-                            {
-                                string fileToOpen = files[fileChoice - 1];
-                                Console.WriteLine($"Opening {fileToOpen}");
-                                System.Threading.Thread.Sleep(2000);
-                                proceed = 1;
-                            }
+            } while (proceed1 == 0);
 
-
-                            break;
-                        case 3:
-                            //delete file
-                            Line();
-                            Console.WriteLine("Delete File");
-                            Line();
-                            Console.WriteLine("Existing Files:");
-                            string[] files2 = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ldzs");
-                            int fileNum2 = 1;
-                            foreach (string file in files2)
-                            {
-
-                                Console.WriteLine($"{fileNum2}:  {file}");
-                                fileNum2++;
-                            }
-                            Console.WriteLine("Choose a File:");
-                            int fileChoice2 = int.Parse(Console.ReadLine());
-                            string fileToDelete = files2[fileChoice2 - 1];
-                            Console.WriteLine($"Delete {fileToDelete}");
-                            Console.WriteLine("1-Yes");
-                            Console.WriteLine("Esc-No");
-                            Line();
-                            input = Console.ReadKey(true);
-                            if (input.Key == ConsoleKey.D1)
-                            {
-                                File.Delete(fileToDelete);
-                                Console.WriteLine("File Deleted");
-                                System.Threading.Thread.Sleep(2000);
-                                back = 1;
-                            }
-
-                            break;
-                    }
-                    input = Console.ReadKey(true);                
-                } while (input.Key != ConsoleKey.Escape && back != 1 && proceed != 1);
-                if(proceed == 1)
-                {
-                    proceed1 = 1;
-                }
-            } while (input.Key != ConsoleKey.Escape && proceed != 1);
-            //█▓▒░*/
-            do
+            /*do
             {
                 Console.SetWindowSize(150, 50);
                 winWidth = Console.WindowWidth;
                 winHeight = Console.WindowHeight;
-                Console.Clear();
-                Line();
-                Console.WriteLine("Console Paint");
-                Line();
-                Console.WriteLine("Options: Draw: Space");
-                Console.WriteLine("Set Color: 1, 2, 3, 4 ...");
-                Console.WriteLine("Set Saturation: F1, F2, F3, F4");
-                Console.WriteLine("Continous Drawing: CS");
-                Console.WriteLine("Clear Screen: Backspace");
-                Console.WriteLine("Save File: F5");
-                Console.WriteLine("Exit: Escape");
-                Line();
-                Console.WriteLine("Current Color and Saturation: █");
-                Console.SetCursorPosition(0, 12);
-                Console.Write("+");
-                for (int i = 0; i < winWidth - 2; i++)
-                {
-                    Console.Write("-");
-                }
-                Console.Write("+");
-                for (int i = 0; i < winHeight - 15; i++)
-                {
-                    Console.Write("|");
-                    for (int j = 0; j < winWidth - 2; j++)
-                    {
-                        Console.Write(" ");
-                    }
-                    Console.Write("|");
-                }
-                Console.Write("+");
-                for (int i = 0; i < winWidth - 2; i++)
-                {
-                    Console.Write("-");
-                }
-                Console.Write("+");
-
-                Console.SetCursorPosition(1, 13);
-
-                
-
+                paintInterface();
                 string saturation = "█";
 
                 do
@@ -249,6 +224,10 @@ namespace rajzoscuccproject
                             if(currentCol != 1)
                             {
                                 Console.SetCursorPosition(currentCol - 1, currentRow);
+                                if (toggleDraw == 1)
+                                {
+                                    Console.Write(saturation);
+                                }
                                 currentCol--;
                             }
                             break;
@@ -256,6 +235,10 @@ namespace rajzoscuccproject
                             if (currentCol != winWidth - 2)
                             {
                                 Console.SetCursorPosition(currentCol + 1, currentRow);
+                                if (toggleDraw == 1)
+                                {
+                                    Console.Write(saturation);
+                                }
                                 currentCol++;
                             }
                             break;
@@ -263,6 +246,10 @@ namespace rajzoscuccproject
                             if (currentRow != 13)
                             {
                                 Console.SetCursorPosition(currentCol, currentRow - 1);
+                                if (toggleDraw == 1)
+                                {
+                                    Console.Write(saturation);
+                                }
                                 currentRow--;
                             }
                             break;
@@ -270,6 +257,10 @@ namespace rajzoscuccproject
                             if (currentRow != winHeight - 3)
                             {
                                 Console.SetCursorPosition(currentCol, currentRow + 1);
+                                if (toggleDraw == 1)
+                                {
+                                    Console.Write(saturation);
+                                }
                                 currentRow++;
                             }
                             break;
@@ -332,25 +323,30 @@ namespace rajzoscuccproject
                         case ConsoleKey.Backspace:
                             Console.SetCursorPosition(1, 13);
                             Console.ResetColor();
-                            for (int i = 0; i < winHeight; i++)
-                            {
-                                Console.Write("|");
-                                for (int j = 0; j < winWidth - 2; j++)
-                                {
-                                    Console.Write(" ");
-                                }
-                                Console.Write("|");
-                            }
+                            paintInterface();
                             Console.SetCursorPosition(1, 13);
                             currentCol = 1;
                             currentRow = 13;
                             writeColor();
                             break;
+                        case ConsoleKey.C:
+                            if (toggleDraw == 0)
+                            {
+                                toggleDraw = 1;
+                            }
+                            else
+                            {
+                                toggleDraw = 0;
+                            }
+                            break;
+                        case ConsoleKey.F5:
+                            saveFile();
+                            break;
                     }
 
                 } while (input.Key != ConsoleKey.Escape);
             } while (input.Key != ConsoleKey.Escape);
-            
+            */
         }
     }
 }

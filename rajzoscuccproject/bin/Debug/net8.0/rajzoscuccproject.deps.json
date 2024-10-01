@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "rajzoscuccproject/1.0.0": {
+        "runtime": {
+          "rajzoscuccproject.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "rajzoscuccproject/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

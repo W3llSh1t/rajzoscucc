@@ -4,13 +4,16 @@ namespace rajzoscuccproject
 {
     internal class Program
     {
-        private static int winWidth = 0;
-        private static int winHeight = 0;
+        private static int winWidth = 150;
+        private static int winHeight = 50;
         private static string saturation = "█";
         private static int currentRow = 13;
         private static int currentCol = 1;
         private static int menuOpt = 0;
         private static string arrow = "-->";
+        private static int writeRow = 0;
+        private static int writeCol = 0;
+        private static int color = 0;
         private static void deleteArrow(int start, int end, int commPos)
         {
             string empty = "   ";
@@ -102,7 +105,7 @@ namespace rajzoscuccproject
                         }
                         break;
                     case ConsoleKey.UpArrow:
-                        if (menuOpt != 0)
+                        if (menuOpt != 1)
                         {
                             menuOpt--;
                             deleteArrow(start, start + length, commPos);
@@ -131,15 +134,16 @@ namespace rajzoscuccproject
         static void Main(string[] args)
         {
             ConsoleKeyInfo input;
-            int opt = 0;
-            int back = 0;
             int proceed = 0;
             int proceed1= 0;
-            int proceed2 = 0;
-            int first = 0;
             int toggleDraw = 0;
-            
+            int l = 0;
+            int openedSaturation = 0;
+            int openedColor = 0;
+            string openedFile = "";
+            string[,] currentFile = new string[winHeight - 15, winWidth - 2];
 
+            
             Console.Clear();
             Line();
             Console.WriteLine("Console Paint");
@@ -150,6 +154,22 @@ namespace rajzoscuccproject
             Console.WriteLine("    Exit");
             Line();
             menu(3, 4, 8);
+            if (menuOpt == 1)
+            {
+                proceed = 1;
+            }
+            else if (menuOpt == 2)
+            {
+                proceed = 2;
+            }
+            else if (menuOpt == 3)
+            {
+                proceed = 3;
+            }
+            else if (menuOpt == 4)
+            {
+                proceed = 4;
+            }
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ldzs");
             do
             {
@@ -173,11 +193,30 @@ namespace rajzoscuccproject
                             File.Create(createFile).Close();
                             Console.WriteLine("File created!");
                             Line();
+                            if (currentFile[0, 0] == null)
+                            {
+                                for (int i = 0; i < winHeight - 15; i++)
+                                {
+                                    for (int j = 0; j < winWidth - 2; j++)
+                                    {
+                                        currentFile[i, j] = "0,0;";
+                                    }
+                                }
+                            }
                             Console.WriteLine("Open File?");
                             Console.WriteLine("    Yes");
                             Console.WriteLine("    No");
                             Line();
                             menu(8, 2, 11);
+
+                            if (menuOpt == 1)
+                            {
+                                proceed1 = 1;
+                            }
+                            else if (menuOpt == 2)
+                            {
+                                Environment.Exit(0);
+                            }
                         }
                         break;
                     case 2:
@@ -197,26 +236,147 @@ namespace rajzoscuccproject
                             {
                                 Console.WriteLine($"    {files[i].Substring(Directory.GetCurrentDirectory().Length + 1)}");
                             }
-                            Console.WriteLine("    Back");
+                            Console.WriteLine("    Exit");
                             Line();
-                            menu(4, files.Length, files.Length + 2);
+                            menu(4, files.Length + 1, files.Length + 6);
+                            if (menuOpt == files.Length + 1)
+                            {
+                                Environment.Exit(0);
+                            }
+                            else
+                            {
+                                Console.SetCursorPosition(0, 13);
+                                openedFile = files[menuOpt - 1];
+                                string[] fileContent = File.ReadAllLines(openedFile);
+                                for (int i = 0; i < fileContent.Length; i++)
+                                {
+                                    string[] line = fileContent[i].Split("\n");
+                                    for (int j = 0; j < line.Length; j++)
+                                    {
+                                        string[] cell = line[j].Split(";");
+                                        for (int k = 0; k < cell.Length; k++)
+                                        {
+                                            string[] data = cell[k].Split(",");
+                                            currentFile[i, k] = $"{data[0]},{data[1]};";
+                                        }
+                                    }
+//innen kell folytatni                                    
+                                }
+                                proceed1 = 1;
+                            }
                         }
                         break;
                     case 3:
+                        Console.Clear();
+                        Line();
+                        Console.WriteLine("Delete File");
+                        Line();
+                        if (files.Length == 0)
+                        {
+                            Console.WriteLine("No files found!");
+                            Thread.Sleep(2500);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Choose a file:");
+                            for (int i = 0; i < files.Length; i++)
+                            {
+                                Console.WriteLine($"    {files[i].Substring(Directory.GetCurrentDirectory().Length + 1)}");
+                            }
+                            Console.WriteLine("    Exit");
+                            Line();
+                            menu(4, files.Length + 1, files.Length + 6);
+                            if (menuOpt == files.Length + 1)
+                            {
+                                Environment.Exit(0);
+                            }
+                            else
+                            {
+                                File.Delete(files[menuOpt - 1]);
+                                Console.WriteLine("File deleted!");
+                                Thread.Sleep(2500);
+                            }
+                        }
                         break;
                 }
             } while (proceed1 == 0);
+            
 
-            /*do
+            Console.SetWindowSize(150, 50);
+            winWidth = Console.WindowWidth;
+            winHeight = Console.WindowHeight;
+            
+            do
             {
-                Console.SetWindowSize(150, 50);
+
                 winWidth = Console.WindowWidth;
                 winHeight = Console.WindowHeight;
                 paintInterface();
+
+                do
+                {
+                    for (int i = 0; i < winHeight - 15; i++)
+                    {
+                        for (int j = 0; j < winWidth - 2; j++)
+                        {
+                            string[] data = currentFile[i, j].Split(",");
+                            int ok = 0;
+                            string saturation1 = "";
+                             int color = 0;
+                            if (data[0] != "0")
+                            {
+                                ok = 1;
+                                saturation1 = data[0];
+                                color = int.Parse(data[1]);
+                            }
+                            switch (color)
+                            {
+                                case 0:
+                                    Console.ResetColor();
+                                    break;
+                                case 1:
+                                    Console.ForegroundColor = ConsoleColor.Blue;
+                                    break;
+                                case 2:
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    break;
+                                case 3:
+                                    Console.ForegroundColor = ConsoleColor.Green;
+                                    break;
+                                case 4:
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    break;
+                                case 5:
+                                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                                    break;
+                                case 6:
+                                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                                    break;
+                                case 7:
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                                    break;
+                                case 8:
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                    break;
+                                case 9:
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    break;
+                            }
+                            Console.SetCursorPosition(j + 1, i + 14);
+                            if (ok == 1)
+                            {
+                                Console.Write(saturation1);
+                            }
+                            
+                        }
+                    }
+
+                } while (l < currentFile.Length);
                 string saturation = "█";
 
                 do
                 {
+                    Console.SetWindowSize(150, 50);
                     input = Console.ReadKey(true);
                     switch (input.Key)
                     {
@@ -227,8 +387,11 @@ namespace rajzoscuccproject
                                 if (toggleDraw == 1)
                                 {
                                     Console.Write(saturation);
+                                    currentFile[writeRow, writeCol] = $"{saturation},{color};";
                                 }
                                 currentCol--;
+                                writeCol--;
+                                
                             }
                             break;
                         case ConsoleKey.RightArrow:
@@ -238,8 +401,11 @@ namespace rajzoscuccproject
                                 if (toggleDraw == 1)
                                 {
                                     Console.Write(saturation);
+                                    currentFile[writeRow, writeCol] = $"{saturation},{color};";
                                 }
                                 currentCol++;
+                                writeCol++;
+                                
                             }
                             break;
                         case ConsoleKey.UpArrow:
@@ -249,8 +415,11 @@ namespace rajzoscuccproject
                                 if (toggleDraw == 1)
                                 {
                                     Console.Write(saturation);
+                                    currentFile[writeRow, writeCol] = $"{saturation},{color};";
                                 }
                                 currentRow--;
+                                writeRow--;
+                                
                             }
                             break;
                         case ConsoleKey.DownArrow:
@@ -260,45 +429,57 @@ namespace rajzoscuccproject
                                 if (toggleDraw == 1)
                                 {
                                     Console.Write(saturation);
+                                    currentFile[writeRow, writeCol] = $"{saturation},{color};";
                                 }
                                 currentRow++;
+                                writeRow++;
+                                
                             }
                             break;
                         case ConsoleKey.D1:
                             Console.ForegroundColor = ConsoleColor.Blue;
                             writeColor();
+                            color = 1;
                             break;
                         case ConsoleKey.D2:
                             Console.ForegroundColor = ConsoleColor.Red;
                             writeColor();
+                            color = 2;
                             break;
                         case ConsoleKey.D3:
                             Console.ForegroundColor = ConsoleColor.Green;
                             writeColor();
+                            color = 3;
                             break;
                         case ConsoleKey.D4:
                             Console.ForegroundColor = ConsoleColor.Yellow;
                             writeColor();
+                            color = 4;
                             break;
                         case ConsoleKey.D5:
                             Console.ForegroundColor = ConsoleColor.DarkBlue;
                             writeColor();
+                            color = 5;
                             break;
                         case ConsoleKey.D6:
                             Console.ForegroundColor = ConsoleColor.DarkRed;
                             writeColor();
+                            color = 6;
                             break;
                         case ConsoleKey.D7:
                             Console.ForegroundColor = ConsoleColor.DarkGreen;
                             writeColor();
+                            color = 7;
                             break;
                         case ConsoleKey.D8:
                             Console.ForegroundColor = ConsoleColor.DarkYellow;
                             writeColor();
+                            color = 8;
                             break;
                         case ConsoleKey.D9:
                             Console.ForegroundColor = ConsoleColor.White;
                             writeColor();
+                            color = 9;
                             break;
                         case ConsoleKey.F1:
                             saturation = "█";
@@ -319,6 +500,7 @@ namespace rajzoscuccproject
                         case ConsoleKey.Spacebar:
                             Console.Write(saturation);
                             Console.SetCursorPosition(currentCol, currentRow);
+                            currentFile[writeRow, writeCol] = $"{saturation},{color};";
                             break;
                         case ConsoleKey.Backspace:
                             Console.SetCursorPosition(1, 13);
@@ -340,13 +522,29 @@ namespace rajzoscuccproject
                             }
                             break;
                         case ConsoleKey.F5:
-                            saveFile();
+                            
+                            File.Delete(openedFile);
+                            File.Create(openedFile).Close();
+                            string currentFileString = "";
+                            for (int i = 0; i < winHeight - 15; i++)
+                            {
+                                for (int j = 0; j < winWidth - 2; j++)
+                                {
+                                    currentFileString += currentFile[i, j];
+                                }
+                                if (i != winHeight - 16)
+                                {
+                                    currentFileString += "\n";
+                                }
+                            }
+                            File.WriteAllText(openedFile, currentFileString);
                             break;
+
                     }
 
                 } while (input.Key != ConsoleKey.Escape);
             } while (input.Key != ConsoleKey.Escape);
-            */
+            
         }
     }
 }

@@ -142,8 +142,8 @@ namespace rajzoscuccproject
             int openedColor = 0;
             string openedFile = "";
             string[,] currentFile = new string[winHeight - 15, winWidth - 2];
+            Console.ResetColor();
 
-            
             Console.Clear();
             Line();
             Console.WriteLine("Console Paint");
@@ -170,7 +170,7 @@ namespace rajzoscuccproject
             {
                 proceed = 4;
             }
-            string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ldzs");
+            
             do
             {
                 switch (proceed)
@@ -193,16 +193,20 @@ namespace rajzoscuccproject
                             File.Create(createFile).Close();
                             Console.WriteLine("File created!");
                             Line();
-                            if (currentFile[0, 0] == null)
+                            string newFileString = "";
+                            for (int i = 0; i < 35; i++)
                             {
-                                for (int i = 0; i < winHeight - 15; i++)
+                                for (int j = 0; j < 147; j++)
                                 {
-                                    for (int j = 0; j < winWidth - 2; j++)
-                                    {
-                                        currentFile[i, j] = "0,0;";
-                                    }
+                                    newFileString += "0,0;";
+                                }
+                                newFileString += "0,0";
+                                if (i != 34)
+                                {
+                                    newFileString += "\n";
                                 }
                             }
+                            File.WriteAllText(createFile, newFileString);
                             Console.WriteLine("Open File?");
                             Console.WriteLine("    Yes");
                             Console.WriteLine("    No");
@@ -211,7 +215,7 @@ namespace rajzoscuccproject
 
                             if (menuOpt == 1)
                             {
-                                proceed1 = 1;
+                                proceed = 2;
                             }
                             else if (menuOpt == 2)
                             {
@@ -220,6 +224,7 @@ namespace rajzoscuccproject
                         }
                         break;
                     case 2:
+                        string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ldzs");
                         Console.Clear();
                         Line();
                         Console.WriteLine("Open File");
@@ -259,19 +264,19 @@ namespace rajzoscuccproject
                                             string[] data = cell[k].Split(",");
                                             currentFile[i, k] = $"{data[0]},{data[1]};";
                                         }
-                                    }
-//innen kell folytatni                                    
+                                    }                                 
                                 }
                                 proceed1 = 1;
                             }
                         }
                         break;
                     case 3:
+                        string[] files1 = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ldzs");
                         Console.Clear();
                         Line();
                         Console.WriteLine("Delete File");
                         Line();
-                        if (files.Length == 0)
+                        if (files1.Length == 0)
                         {
                             Console.WriteLine("No files found!");
                             Thread.Sleep(2500);
@@ -279,20 +284,20 @@ namespace rajzoscuccproject
                         else
                         {
                             Console.WriteLine("Choose a file:");
-                            for (int i = 0; i < files.Length; i++)
+                            for (int i = 0; i < files1.Length; i++)
                             {
-                                Console.WriteLine($"    {files[i].Substring(Directory.GetCurrentDirectory().Length + 1)}");
+                                Console.WriteLine($"    {files1[i].Substring(Directory.GetCurrentDirectory().Length + 1)}");
                             }
                             Console.WriteLine("    Exit");
                             Line();
-                            menu(4, files.Length + 1, files.Length + 6);
-                            if (menuOpt == files.Length + 1)
+                            menu(4, files1.Length + 1, files1.Length + 6);
+                            if (menuOpt == files1.Length + 1)
                             {
                                 Environment.Exit(0);
                             }
                             else
                             {
-                                File.Delete(files[menuOpt - 1]);
+                                File.Delete(files1[menuOpt - 1]);
                                 Console.WriteLine("File deleted!");
                                 Thread.Sleep(2500);
                             }
@@ -312,7 +317,7 @@ namespace rajzoscuccproject
                 winWidth = Console.WindowWidth;
                 winHeight = Console.WindowHeight;
                 paintInterface();
-
+                
                 do
                 {
                     for (int i = 0; i < winHeight - 15; i++)
@@ -322,11 +327,12 @@ namespace rajzoscuccproject
                             string[] data = currentFile[i, j].Split(",");
                             int ok = 0;
                             string saturation1 = "";
-                             int color = 0;
+                            int color = 0;
                             if (data[0] != "0")
                             {
                                 ok = 1;
                                 saturation1 = data[0];
+                                data[1] = data[1].Substring(0, data[1].Length - 1);
                                 color = int.Parse(data[1]);
                             }
                             switch (color)
@@ -362,18 +368,18 @@ namespace rajzoscuccproject
                                     Console.ForegroundColor = ConsoleColor.White;
                                     break;
                             }
-                            Console.SetCursorPosition(j + 1, i + 14);
+                            Console.SetCursorPosition(j + 1, i + 13);
                             if (ok == 1)
                             {
                                 Console.Write(saturation1);
                             }
-                            
+                            l++;
                         }
                     }
 
                 } while (l < currentFile.Length);
                 string saturation = "█";
-
+                Console.SetCursorPosition(1, 13);
                 do
                 {
                     Console.SetWindowSize(150, 50);
@@ -528,16 +534,21 @@ namespace rajzoscuccproject
                             string currentFileString = "";
                             for (int i = 0; i < winHeight - 15; i++)
                             {
-                                for (int j = 0; j < winWidth - 2; j++)
+                                for (int j = 0; j < 147; j++)
                                 {
                                     currentFileString += currentFile[i, j];
                                 }
+                                currentFileString += currentFile[i, 147].Substring(0,3);
                                 if (i != winHeight - 16)
                                 {
                                     currentFileString += "\n";
                                 }
                             }
                             File.WriteAllText(openedFile, currentFileString);
+                            Console.SetCursorPosition(11, 33);
+                            Console.Write("File saved!");
+                            Thread.Sleep(2500);
+                            Environment.Exit(0);
                             break;
 
                     }

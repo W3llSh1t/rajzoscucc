@@ -303,6 +303,9 @@ namespace rajzoscuccproject
                             }
                         }
                         break;
+                    case 4:
+                        Environment.Exit(0);
+                        break;
                 }
             } while (proceed1 == 0);
             

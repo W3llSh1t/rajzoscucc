@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("rajzoscuccproject")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8348e2dfe6568150db0d84ea21504ee21258ff1f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9fbeb46c5500b9dd4f3dba88fd981e4167863e68")]
 [assembly: System.Reflection.AssemblyProductAttribute("rajzoscuccproject")]
 [assembly: System.Reflection.AssemblyTitleAttribute("rajzoscuccproject")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
